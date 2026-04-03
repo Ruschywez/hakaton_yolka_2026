@@ -47,6 +47,15 @@ class UserRepository:
             return None
 
     @staticmethod
+    def get_by_id(user_id: int) -> Optional[dict]:
+        """Получение полного профиля пользователя по ID"""
+        try:
+            user = User.get(User.user == user_id)
+            return user.to_dict()
+        except DoesNotExist:
+            return None
+
+    @staticmethod
     def update(user_id: int, **kwargs) -> bool:
         """Обновление данных пользователя"""
         try:
@@ -95,6 +104,21 @@ class MessagesRepository:
 
         return [(msg.message, msg.text, msg.type.name, msg.date_time)
                 for msg in messages]
+
+    @staticmethod
+    def get_history_for_ai(user_id: int) -> List[dict]:
+        """Получение истории сообщений для контекста GigaChat"""
+        messages = (Messages
+                   .select()
+                   .where(Messages.user == user_id)
+                   .order_by(Messages.date_time.asc()))
+        
+        history = []
+        for msg in messages:
+            # Преобразуем assistant/user из базы в формат GigaChat
+            role = "assistant" if msg.type.name == "assistant" else "user"
+            history.append({"role": role, "content": msg.text})
+        return history
 
     @staticmethod
     def create(user_id: int, text: str, message_type: str = "info") -> bool:

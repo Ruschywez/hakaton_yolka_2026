@@ -21,6 +21,7 @@ class User(BaseModel):
     last_name = CharField(max_length=100,)
     first_name = CharField(max_length=100)
     surname = CharField(max_length=100)
+    date_birth = CharField(max_length=20, null=True)
 
     education_level = ForeignKeyField(Education_level, backref='education', on_delete='CASCADE', on_update='CASCADE', column_name="education_level_fk", null=True)
     education_specialize = CharField(max_length=512, null=True)
@@ -34,9 +35,10 @@ class User(BaseModel):
             "last_name": self.last_name,
             "first_name": self.first_name,
             "surname": self.surname,
-            "education_level": self.education_level,
+            "date_birth": self.date_birth,
+            "education_level": self.education_level.name if self.education_level else None,
             "education_specialize": self.education_specialize,
-            "interests":  self.interests
+            "interest":  self.interests
         }
 class Messages_type(BaseModel):
     type = AutoField(primary_key=True, column_name="type_id")
