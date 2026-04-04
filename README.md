@@ -441,10 +441,10 @@ curl http://localhost:8000/ping
 
 ### Сущности
 
-**Логическая схема сделанная в drawio:**
+**Логическая схема сделанная в drawio:**  
 ![Архитектура системы](docs/схема%20БД.png)
 
-**Реализация в DBeaver**
+**Реализация в DBeaver**  
 ![Схема из DBeaver](docs/схема%20DBeaver.png)
 > Отедьное спасибо [@leowrre](https://github.com/leowrre) за работу над базой данных
 
