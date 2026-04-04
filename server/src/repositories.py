@@ -3,6 +3,9 @@ from peewee import DoesNotExist
 from .entities import User, Education_level, Messages, Messages_type
 from typing import List, Tuple, Optional
 
+SYSTEM_TYPE = 1
+USER_TYPE = 2
+BOT_TYPE = 3
 
 class UserRepository:
     """Репозиторий для работы с пользователями"""
@@ -20,12 +23,14 @@ class UserRepository:
             "surname": surname,
         }
 
-        if education_level is not None:
+        if education_level is not None and education_level.strip():
             try:
                 edu_level_obj = Education_level.get(Education_level.name == education_level)
                 user_data["education_level"] = edu_level_obj.level
             except DoesNotExist:
                 raise ValueError(f"Уровень образования '{education_level}' не найден")
+        else:
+            user_data["education_level"] = None
 
         if education_specialize is not None:
             user_data["education_specialize"] = education_specialize
@@ -68,10 +73,6 @@ class UserRepository:
                 except DoesNotExist:
                     raise ValueError(f"Уровень образования '{kwargs['education_level']}' не найден")
 
-            # Убираем date_birth если его нет в модели
-            if "date_birth" in kwargs:
-                kwargs.pop("date_birth")
-
             for key, value in kwargs.items():
                 if hasattr(user, key) and value is not None:
                     setattr(user, key, value)
@@ -112,29 +113,23 @@ class MessagesRepository:
                    .select()
                    .where(Messages.user == user_id)
                    .order_by(Messages.date_time.asc()))
-        
+
         history = []
         for msg in messages:
-            # Преобразуем assistant/user из базы в формат GigaChat
-            role = "assistant" if msg.type.name == "assistant" else "user"
+            role = "assistant" if msg.type.type == BOT_TYPE else "user"
             history.append({"role": role, "content": msg.text})
         return history
 
     @staticmethod
-    def create(user_id: int, text: str, message_type: str = "info") -> bool:
+    def create(user_id: int, text: str, message_type: int = USER_TYPE) -> bool:
         """Создание нового сообщения"""
         try:
             # Проверяем существует ли пользователь
             User.get(User.user == user_id)
-            # Находим тип сообщения по названию
-            try:
-                msg_type_obj = Messages_type.get(Messages_type.name == message_type)
-            except DoesNotExist:
-                raise ValueError(f"Тип сообщения '{message_type}' не найден")
 
             Messages.create(
                 user=user_id,
-                type=msg_type_obj.type,
+                type=message_type,
                 text=text,
                 date_time=datetime.now()
             )

@@ -18,8 +18,8 @@ class User(BaseModel):
     login = CharField(max_length=100, unique=True)
     password = CharField(max_length=100)
 
-    last_name = CharField(max_length=100,)
-    first_name = CharField(max_length=100)
+    last_name = CharField(max_length=100, column_name="lastname")
+    first_name = CharField(max_length=100, column_name="firstname")
     surname = CharField(max_length=100)
     date_birth = CharField(max_length=20, null=True)
 
@@ -38,7 +38,7 @@ class User(BaseModel):
             "date_birth": self.date_birth,
             "education_level": self.education_level.name if self.education_level else None,
             "education_specialize": self.education_specialize,
-            "interest":  self.interests
+            "interests": self.interests
         }
 class Messages_type(BaseModel):
     type = AutoField(primary_key=True, column_name="type_id")
@@ -50,15 +50,15 @@ class Messages_type(BaseModel):
         }
 class Messages(BaseModel):
     message = AutoField(primary_key=True, column_name="message_id")
-    user = ForeignKeyField(User, backref='user', on_delete='CASCADE', on_update='CASCADE', column_name="user_fk")
-    type = ForeignKeyField(Messages_type, backref='type', on_delete='CASCADE', on_update='CASCADE', column_name="type_fk")
+    user = ForeignKeyField(User, backref='user_messages', on_delete='CASCADE', on_update='CASCADE', column_name="user_fk")
+    type = ForeignKeyField(Messages_type, backref='type_messages', on_delete='CASCADE', on_update='CASCADE', column_name="type_fk")
     text = CharField(max_length=4000)
     date_time = DateTimeField()
     def to_dict(self) -> dict:
         return {
             "message": self.message,
-            "user": self.user,
-            "type": self.type,
+            "user": self.user.user if hasattr(self.user, 'user') else self.user,
+            "type": self.type.type if hasattr(self.type, 'type') else self.type,
             "text": self.text,
             "date_time": self.date_time
         }

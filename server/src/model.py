@@ -4,7 +4,7 @@ from typing import Optional, List
 from fastapi import FastAPI, HTTPException, status, Body
 from pydantic import BaseModel
 
-from .repositories import UserRepository, MessagesRepository, EducationLevelRepository, MessagesTypeRepository
+from .repositories import UserRepository, MessagesRepository, EducationLevelRepository, MessagesTypeRepository, USER_TYPE, BOT_TYPE
 from .gigachat_client import gigachat_client
 
 userRepository = UserRepository()
@@ -144,8 +144,7 @@ def create_message(msg: MessageCreate):
         raise HTTPException(status_code=404, detail="User not found")
 
     # 1. Сохраняем сообщение пользователя
-    user_msg_type = "user"
-    success = messagesRepository.create(user_id=msg.user_id, text=msg.text, message_type=user_msg_type)
+    success = messagesRepository.create(user_id=msg.user_id, text=msg.text, message_type=USER_TYPE)
     if not success:
          raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to save user message")
 
@@ -157,7 +156,7 @@ def create_message(msg: MessageCreate):
 
     # Если мы не инициализировали системный промпт специфично для пользователя, 
     # мы можем добавить его контекст прямо в сообщение
-    user_context = f"\nКонтекст пользователя: Имя {user_data.get('first_name', '')}, Образование: {user_data.get('education_level', '')}, Интересы: {user_data.get('interest', '')}"
+    user_context = f"\nКонтекст пользователя: Имя {user_data.get('first_name', '')}, Образование: {user_data.get('education_level', '')}, Интересы: {user_data.get('interests', '')}"
     ai_input = msg.text + user_context
     
     # 3. Отправляем в GigaChat
@@ -165,8 +164,7 @@ def create_message(msg: MessageCreate):
     assistant_text = gigachat_client.generate_response(ai_input, history=history)
 
     # 4. Сохраняем ответ системы
-    assistant_msg_type = "assistant"
-    messagesRepository.create(user_id=msg.user_id, text=assistant_text, message_type=assistant_msg_type)
+    messagesRepository.create(user_id=msg.user_id, text=assistant_text, message_type=BOT_TYPE)
 
     # Получаем последнее (созданное) сообщение ассистента чтобы вернуть его с ID и датой
     all_msgs = messagesRepository.get_by_user(msg.user_id)

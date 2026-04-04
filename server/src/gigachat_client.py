@@ -2,7 +2,7 @@ import json
 import logging
 from typing import List, Dict, Any, Optional
 from gigachat import GigaChat
-from gigachat.models import Messages as GigaChatMessages, MessagesRole
+from gigachat.models import Messages as GigaChatMessages, MessagesRole, Chat
 from gigachat.exceptions import GigaChatException
 from .config import GIGACHAT_CREDENTIALS, GIGACHAT_SCOPE, GIGACHAT_MODEL, SYSTEM_PROMPT_FILE
 
@@ -71,7 +71,7 @@ class GigaChatClient:
         messages.append(GigaChatMessages(role=MessagesRole.USER, content=user_message))
 
         try:
-            response = self.client.chat(messages)
+            response = self.client.chat(Chat(messages=messages))
             return response.choices[0].message.content
         except GigaChatException as e:
             logger.error(f"GigaChat API error: {e}")
