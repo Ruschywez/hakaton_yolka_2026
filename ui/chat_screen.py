@@ -13,68 +13,70 @@ class ChatScreen(tk.Frame):
     """Экран чата с боковой панелью."""
 
     def __init__(self, parent, user_data=None,
-                 on_navigate=None, on_logout=None):
+                 on_navigate=None, on_logout=None, show_sidebar=True):
         super().__init__(parent, bg=COLORS['bg_primary'])
         self.user_data = user_data or {}
         self.on_navigate = on_navigate
         self.on_logout = on_logout
         self.is_sending = False
+        self.show_sidebar = show_sidebar
+        self.nav_buttons = {}
         self._build_ui()
         self._load_messages()
 
     def _build_ui(self):
-        # === SIDEBAR ===
-        sidebar = tk.Frame(self, bg=COLORS['bg_sidebar'], width=SIDEBAR_WIDTH)
-        sidebar.pack(side='left', fill='y')
-        sidebar.pack_propagate(False)
+        if self.show_sidebar:
+            # === SIDEBAR ===
+            sidebar = tk.Frame(self, bg=COLORS['bg_sidebar'], width=SIDEBAR_WIDTH)
+            sidebar.pack(side='left', fill='y')
+            sidebar.pack_propagate(False)
 
-        # Лого в сайдбаре
-        logo_frame = tk.Frame(sidebar, bg=COLORS['bg_sidebar'])
-        logo_frame.pack(fill='x', padx=16, pady=(20, 8))
-        tk.Label(logo_frame, text="Ёлка", bg=COLORS['bg_sidebar'],
-                 fg=COLORS['accent'], font=get_font('xl', bold=True)).pack(
-            anchor='w')
-        tk.Label(logo_frame, text="AI Карьера", bg=COLORS['bg_sidebar'],
-                 fg=COLORS['text_muted'], font=get_font('xs')).pack(anchor='w')
+            # Лого в сайдбаре
+            logo_frame = tk.Frame(sidebar, bg=COLORS['bg_sidebar'])
+            logo_frame.pack(fill='x', padx=16, pady=(20, 8))
+            tk.Label(logo_frame, text="Ёлка", bg=COLORS['bg_sidebar'],
+                     fg=COLORS['accent'], font=get_font('xl', bold=True)).pack(
+                anchor='w')
+            tk.Label(logo_frame, text="AI Карьера", bg=COLORS['bg_sidebar'],
+                     fg=COLORS['text_muted'], font=get_font('xs')).pack(anchor='w')
 
-        # Разделитель
-        tk.Frame(sidebar, bg=COLORS['divider'], height=1).pack(
-            fill='x', padx=16, pady=12)
+            # Разделитель
+            tk.Frame(sidebar, bg=COLORS['divider'], height=1).pack(
+                fill='x', padx=16, pady=12)
 
-        # Инфо пользователя
-        user_frame = tk.Frame(sidebar, bg=COLORS['bg_sidebar'])
-        user_frame.pack(fill='x', padx=16, pady=(0, 12))
-        name = self.user_data.get('first_name', 'Пользователь')
-        tk.Label(user_frame, text=f"Привет, {name}!",
-                 bg=COLORS['bg_sidebar'], fg=COLORS['text_primary'],
-                 font=get_font('md', bold=True), anchor='w').pack(fill='x')
+            # Инфо пользователя
+            user_frame = tk.Frame(sidebar, bg=COLORS['bg_sidebar'])
+            user_frame.pack(fill='x', padx=16, pady=(0, 12))
+            name = self.user_data.get('first_name', 'Пользователь')
+            tk.Label(user_frame, text=f"Привет, {name}!",
+                     bg=COLORS['bg_sidebar'], fg=COLORS['text_primary'],
+                     font=get_font('md', bold=True), anchor='w').pack(fill='x')
 
-        # Разделитель
-        tk.Frame(sidebar, bg=COLORS['divider'], height=1).pack(
-            fill='x', padx=16, pady=(0, 12))
+            # Разделитель
+            tk.Frame(sidebar, bg=COLORS['divider'], height=1).pack(
+                fill='x', padx=16, pady=(0, 12))
 
-        # Навигация
-        self.nav_buttons = {}
-        nav_items = [
-            ('chat', 'Чат', chr(9776)),
-            ('profile', 'Профиль', chr(9679)),
-            ('edit', 'Изменить данные', chr(9998)),
-        ]
-        for key, text, icon in nav_items:
-            active = (key == 'chat')
-            btn = SidebarButton(sidebar, text=text, icon=icon,
-                                command=lambda k=key: self._navigate(k),
-                                active=active)
-            btn.pack(fill='x')
-            self.nav_buttons[key] = btn
+            # Навигация
+            nav_items = [
+                ('chat', 'Чат', chr(9776)),
+                ('profile', 'Профиль', chr(9679)),
+                ('edit', 'Изменить данные', chr(9998)),
+            ]
+            for key, text, icon in nav_items:
+                active = (key == 'chat')
+                btn = SidebarButton(sidebar, text=text, icon=icon,
+                                    command=lambda k=key: self._navigate(k),
+                                    active=active)
+                btn.pack(fill='x')
+                self.nav_buttons[key] = btn
 
-        # Спейсер
-        tk.Frame(sidebar, bg=COLORS['bg_sidebar']).pack(fill='both', expand=True)
+            # Спейсер
+            tk.Frame(sidebar, bg=COLORS['bg_sidebar']).pack(fill='both', expand=True)
 
-        # Кнопка выхода
-        logout_btn = SidebarButton(sidebar, text="Выйти", icon=chr(8592),
-                                   command=self.on_logout)
-        logout_btn.pack(fill='x', pady=(0, 16))
+            # Кнопка выхода
+            logout_btn = SidebarButton(sidebar, text="Выйти", icon=chr(8592),
+                                       command=self.on_logout)
+            logout_btn.pack(fill='x', pady=(0, 16))
 
         # === ОСНОВНАЯ ОБЛАСТЬ ===
         main = tk.Frame(self, bg=COLORS['bg_primary'])
