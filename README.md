@@ -1,10 +1,12 @@
-# Карьерный трек AI
+<img width="700" height="192" alt="изображение" src="https://github.com/user-attachments/assets/533b8bce-b9a1-4744-9699-1627aafe0ee2" /># Карьерный трек AI
 
 Сервис с ИИ-ассистентом — FastAPI-сервер и десктопное клиентское приложение, помогающие пользователям определиться с профессией, построить карьерный путь и найти подходящие вакансии.
 
 Команда: [sudo rm -rf ~/]
 
-README оформил [@Ruschywez](https://github.com/Ruschywez)
+README и видеоролик оформил [@Ruschywez](https://github.com/Ruschywez)
+
+![видео](2026-04-04 14-47-12_2.mp4)
 
 
 ---
