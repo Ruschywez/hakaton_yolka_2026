@@ -67,7 +67,7 @@ class ProfileScreen(tk.Frame):
         full_name = ' '.join(filter(None, [
             self.user_data.get('last_name', ''),
             self.user_data.get('first_name', ''),
-            self.user_data.get('sur_name', '')
+            self.user_data.get('surname', self.user_data.get('sur_name', ''))
         ]))
         tk.Label(inner, text=full_name or 'Пользователь',
                  bg=COLORS['bg_secondary'], fg=COLORS['text_primary'],

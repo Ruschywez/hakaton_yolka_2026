@@ -2,7 +2,7 @@
 
 # API
 API_BASE_URL = "http://26.164.106.34:8000/"
-MOCK_MODE = False
+MOCK_MODE = False 
 
 # Приложение
 APP_TITLE = "Ёлка — Карьерный AI Ассистент"
