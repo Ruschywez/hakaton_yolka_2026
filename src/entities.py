@@ -1,4 +1,4 @@
-from peewee import AutoField, CharField, Check, DateTimeField, DecimalField, ForeignKeyField, IntegerField, Model
+from peewee import AutoField, CharField, Check, DateTimeField, ForeignKeyField, Model
 from .db_connect import create_db_connect
 
 class BaseModel(Model): # Класс для подключения!

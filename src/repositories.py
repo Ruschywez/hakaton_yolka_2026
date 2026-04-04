@@ -3,9 +3,14 @@ from peewee import DoesNotExist
 from .entities import User, Education_level, Messages, Messages_type
 from typing import List, Tuple, Optional
 
-SYSTEM_TYPE = 1
-USER_TYPE = 2
-BOT_TYPE = 3
+"""Статические методы позволяют удобно не инициализирвоать репозитории
+    соответсвтенно их не нужно запсиывать в переменные, можно просто
+    импортировать их из этого модуля
+"""
+# типы сообщения для
+SYSTEM_TYPE = 1 # системный промт
+USER_TYPE = 2 # сообщение пользователя
+BOT_TYPE = 3 # ответ ассистента крч
 
 class UserRepository:
     """Репозиторий для работы с пользователями"""
@@ -43,11 +48,10 @@ class UserRepository:
         return user.user
 
     @staticmethod
-    def get_by_login_password(login: str, password: str) -> Optional[int]:
+    def get_by_login_password(login: str, password: str) -> Optional[User]:
         """Получение user_id по логину и паролю"""
         try:
-            user = User.get((User.login == login) & (User.password == password))
-            return user.user
+            return User.get((User.login == login) & (User.password == password))
         except DoesNotExist:
             return None
 
@@ -62,7 +66,9 @@ class UserRepository:
 
     @staticmethod
     def update(user_id: int, **kwargs) -> bool:
-        """Обновление данных пользователя"""
+        """Обновление данных пользователя
+            оно адаптировано специально под path, но можно и update сделать
+        """
         try:
             user = User.get(User.user == user_id)
 
@@ -160,7 +166,10 @@ class MessagesRepository:
 
 
 class EducationLevelRepository:
-    """Репозиторий для работы с уровнями образования (вспомогательный)"""
+    """Репозиторий для работы с уровнями образования (вспомогательный)
+        БД должна содержать заранее прописанные аргументы, так что тут
+        нет методов на изменение и доабвление
+    """
 
     @staticmethod
     def get_all() -> List[dict]:
@@ -188,7 +197,10 @@ class EducationLevelRepository:
 
 
 class MessagesTypeRepository:
-    """Репозиторий для работы с типами сообщений (вспомогательный)"""
+    """Репозиторий для работы с типами сообщений (вспомогательный)
+        БД должна содержать заранее прописанные аргументы, так что тут
+        нет методов на изменение и доабвление
+    """
 
     @staticmethod
     def get_all() -> List[dict]:

@@ -8,13 +8,19 @@ from .config import GIGACHAT_CREDENTIALS, GIGACHAT_SCOPE, GIGACHAT_MODEL, SYSTEM
 
 logger = logging.getLogger(__name__)
 
+"""Зачем вы сюда смотрите T^T"""
+
 class GigaChatClient:
+    """
+        Вынесение всей логики для контакта с внешним AI API в отдельынй класс
+    """
     def __init__(self):
-        self.credentials = GIGACHAT_CREDENTIALS
-        self.scope = GIGACHAT_SCOPE
-        self.model = GIGACHAT_MODEL
-        self.system_prompt = self._load_system_prompt()
-        self.client = None
+        self.credentials = GIGACHAT_CREDENTIALS # ключ авторизации
+        self.scope = GIGACHAT_SCOPE # область доступа API
+        self.model = GIGACHAT_MODEL # имя выбранной модели
+        self.system_prompt = self._load_system_prompt() # если бы не это, то система была бы просто общением с нейронкой
+        # промт подгружается из отдельного файла
+        self.client = None # будущий клиент
         self._init_client()
 
     def _init_client(self):
@@ -48,14 +54,14 @@ class GigaChatClient:
 
     def generate_response(self, user_message: str, history: List[Dict[str, str]] = None) -> Optional[str]:
         """
-        Отправляет сообщение в GigaChat с учетом истории диалога.
-        history: список словарей в формате [{"role": "user"|"assistant", "content": "text"}]
+            Отправляет сообщение в GigaChat с учетом истории диалога.
+            history: список словарей в формате [{"role": "user"|"assistant", "content": "text"}]
         """
         if not self.client:
             logger.error("GigaChat client is not initialized.")
             return "Извините, сервис AI временно недоступен (не настроены ключи API)."
 
-        messages = []
+        messages = [] # каждый раз собирается по частям
         
         # 1. Добавляем системный промпт
         if self.system_prompt.get("content"):
