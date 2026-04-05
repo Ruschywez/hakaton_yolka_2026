@@ -1,7 +1,7 @@
 """Конфигурация приложения Ёлка — Карьерный AI Ассистент."""
 
 # API
-API_BASE_URL = "http://26.164.106.34:8000/"
+API_BASE_URL = "http://localhost:8000/"
 MOCK_MODE = False 
 
 # Приложение

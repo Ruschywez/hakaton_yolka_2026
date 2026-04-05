@@ -132,7 +132,7 @@ class EditProfileScreen(tk.Frame):
         if val:
             spec_entry.set(val)
         spec_entry.pack(fill='x', pady=(0, 12))
-        self.entries['education_specialice'] = spec_entry
+        self.entries['education_specialice'] = spec_entry # API ждёт 'c' на входе
 
         tk.Label(right, text="Увлечения", bg=COLORS['bg_secondary'],
                  fg=COLORS['text_secondary'], font=get_font('sm'),
@@ -142,7 +142,7 @@ class EditProfileScreen(tk.Frame):
         if val:
             interest_entry.set(val)
         interest_entry.pack(fill='x', pady=(0, 12))
-        self.entries['interests'] = interest_entry
+        self.entries['interests'] = interest_entry # API ждёт 'interests' (plural)
 
         # Новый пароль
         tk.Label(right, text="Новый пароль", bg=COLORS['bg_secondary'],
@@ -190,10 +190,17 @@ class EditProfileScreen(tk.Frame):
 
         try:
             auth_api.update_profile(**data)
-            # Обновляем локальные данные
+            
+            # Синхронизируем локальные данные (учитываем расхождения в ключах API)
             for k, v in data.items():
-                if k != 'password':
-                    self.user_data[k] = v
+                if k == 'password': continue
+                self.user_data[k] = v
+                
+                # Дублируем для совместимости с отображением (z/c и surname/sur_name)
+                if k == 'education_specialice': self.user_data['education_specialize'] = v
+                if k == 'sur_name': self.user_data['surname'] = v
+                if k == 'interests': self.user_data['interest'] = v
+
             self.msg_label.configure(text="Данные сохранены!",
                                      fg=COLORS['success'])
             if self.on_save:

@@ -169,6 +169,8 @@ class ChatScreen(tk.Frame):
         user_id = self.user_data.get('user_id', self.user_data.get('user'))
         try:
             msgs = msg_api.get_messages(user_id)
+            if isinstance(msgs, list):
+                msgs = msgs[::-1] # Самые старые — первые
             for msg in msgs:
                 self._add_bubble(msg['text'],
                                  msg['type'] == 'user',
