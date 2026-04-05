@@ -8,11 +8,11 @@ MOCK_USER_DATA = {
     'login': 'demo',
     'first_name': 'Егор',
     'last_name': 'Васильев',
-    'sur_name': 'Александрович',
+    'surname': 'Александрович',
     'date_birth': '2005-06-15',
     'education_level': 'Студент вуза',
-    'education_specialice': 'Информационные технологии',
-    'interest': 'Программирование, Искусственный интеллект, Data Science'
+    'education_specialize': 'Информационные технологии',
+    'interests': 'Программирование, Искусственный интеллект, Data Science'
 }
 
 
@@ -29,8 +29,8 @@ def register(login_str, password, last_name, first_name, sur_name, date_birth):
         return {
             'user_id': 1, 'login': login_str,
             'first_name': first_name, 'last_name': last_name,
-            'sur_name': sur_name, 'date_birth': date_birth,
-            'education_level': '', 'education_specialice': '', 'interest': ''
+            'surname': sur_name, 'date_birth': date_birth,
+            'education_level': '', 'education_specialize': '', 'interests': ''
         }
     return client.post('authorization/', data={
         'login': login_str, 'password': password,
