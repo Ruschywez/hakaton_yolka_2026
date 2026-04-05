@@ -83,7 +83,10 @@ class EditProfileScreen(tk.Frame):
                      fg=COLORS['text_secondary'], font=get_font('sm'),
                      anchor='w').pack(fill='x', pady=(0, 2))
             entry = ModernEntry(left, placeholder=label)
-            val = self.user_data.get(key, '')
+            if key == 'sur_name':
+                val = self.user_data.get('surname', self.user_data.get('sur_name', ''))
+            else:
+                val = self.user_data.get(key, '')
             if val:
                 entry.set(val)
             entry.pack(fill='x', pady=(0, 12))
@@ -117,7 +120,7 @@ class EditProfileScreen(tk.Frame):
                   foreground=[('readonly', COLORS['text_primary'])])
 
         current_edu = self.user_data.get('education_level', '')
-        if current_edu in EDUCATION_LEVELS[1:]:
+        if current_edu:
             self.education_combo.set(current_edu)
 
         # Специальность
@@ -125,7 +128,7 @@ class EditProfileScreen(tk.Frame):
                  fg=COLORS['text_secondary'], font=get_font('sm'),
                  anchor='w').pack(fill='x', pady=(0, 2))
         spec_entry = ModernEntry(right, placeholder="Ваша специальность")
-        val = self.user_data.get('education_specialice', '')
+        val = self.user_data.get('education_specialize', self.user_data.get('education_specialice', ''))
         if val:
             spec_entry.set(val)
         spec_entry.pack(fill='x', pady=(0, 12))
@@ -176,7 +179,9 @@ class EditProfileScreen(tk.Frame):
         if edu_val:
             data['education_level'] = edu_val
             
-        data['user_id'] = self.user_data.get('user', self.user_data.get('user', 1))
+        user_ident = self.user_data.get('user_id', self.user_data.get('user'))
+        if user_ident:
+            data['user_id'] = user_ident
 
         if not data or len(data) == 1: # only user_id
             self.msg_label.configure(text="Нечего сохранять",

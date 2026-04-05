@@ -166,7 +166,7 @@ class ChatScreen(tk.Frame):
             self.on_navigate(key)
 
     def _load_messages(self):
-        user_id = self.user_data.get('user', 1)
+        user_id = self.user_data.get('user_id', self.user_data.get('user'))
         try:
             msgs = msg_api.get_messages(user_id)
             for msg in msgs:
@@ -202,7 +202,7 @@ class ChatScreen(tk.Frame):
         self.chat_scroll.scroll_to_bottom()
 
         self.is_sending = True
-        user_id = self.user_data.get('user', 1)
+        user_id = self.user_data.get('user_id', self.user_data.get('user'))
 
         def do_send():
             try:
